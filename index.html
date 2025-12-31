@@ -105,6 +105,7 @@
             line-height: 1.1;
             background: linear-gradient(to right, #fff, #8fa396);
             -webkit-background-clip: text;
+            background-clip: text; /* STANDARD PROPERTY ADDED HERE */
             -webkit-text-fill-color: transparent;
             margin-bottom: 1.5rem;
         }
@@ -254,7 +255,6 @@
         }
 
         /* Stats Grid for FinOps */
-        /* Updated to use CSS Class for mobile stacking */
         .stats-grid {
             margin-top: 1rem; 
             display: grid; 
@@ -265,14 +265,14 @@
         .stat-item {
             display: flex;
             flex-direction: column;
+            overflow: hidden; 
         }
         
         .stat-val {
-            /* Clamp font size so it shrinks on mobile */
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-size: clamp(1.5rem, 2.5vw, 2.5rem);
             font-weight: 700;
             color: var(--text-main);
-            word-break: break-word; /* Safety break */
+            white-space: nowrap; 
         }
         
         .stat-label {
@@ -281,7 +281,6 @@
         }
 
         /* Nova Section */
-        /* Updated to use CSS Class for mobile stacking */
         .nova-grid {
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -345,12 +344,12 @@
             
             #nova .schematic-overlay { display: none; }
 
-            /* FIX 1: Stack Stats Grid on Mobile so PowerBI fits */
+            /* Stack Stats Grid on Mobile */
             .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            /* FIX 2: Stack Nova Grid so text isn't squished into 50% width */
+            /* Stack Nova Grid on Mobile */
             .nova-grid {
                 grid-template-columns: 1fr;
                 gap: 2rem;
