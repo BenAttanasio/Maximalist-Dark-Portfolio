@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ben Attanasio | Operator. Builder. Engineer.</title>
+    <style>
+        /* --- RESET & VARIABLES --- */
+        :root {
+            --bg-deep: #050a07;
+            --bg-panel: rgba(20, 30, 25, 0.4);
+            --accent-green: #00ff9d;
+            --accent-dim: #1a4d33;
+            --text-main: #e0e6e3;
+            --text-muted: #8fa396;
+            --font-display: 'Courier New', Courier, monospace; /* Tech/Code vibe */
+            --font-body: system-ui, -apple-system, sans-serif;
+            --card-border: 1px solid rgba(0, 255, 157, 0.1);
+            --glass: blur(12px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- AMBIENT BACKGROUND --- */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(0, 80, 40, 0.15), transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(20, 60, 40, 0.1), transparent 40%);
+            /* Scanline/Noise texture overlay */
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* Monstera Abstract Shapes (CSS Only) */
+        .leaf-shape {
+            position: fixed;
+            background: linear-gradient(135deg, rgba(0,255,157,0.03), transparent);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            filter: blur(40px);
+            z-index: -1;
+            animation: float 20s infinite ease-in-out;
+        }
+        .leaf-1 { top: -10%; right: -10%; width: 600px; height: 600px; }
+        .leaf-2 { bottom: -10%; left: -5%; width: 500px; height: 500px; animation-delay: -5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, 40px) rotate(5deg); }
+        }
+
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .mono-label {
+            font-family: var(--font-display);
+            color: var(--accent-green);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            display: block;
+            opacity: 0.8;
+        }
+
+        .display-text {
+            /* Responsive text sizing */
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1.1;
+            background: linear-gradient(to right, #fff, #8fa396);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            display: inline-block;
+            padding: 1rem 1.5rem;
+            background: rgba(0, 255, 157, 0.05);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            margin-right: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-green);
+            color: var(--bg-deep);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);
+        }
+
+        .btn-secondary {
+            border-color: var(--text-muted);
+            color: var(--text-muted);
+            background: transparent;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--text-main);
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+            box-shadow: none;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--bg-panel);
+            border: var(--card-border);
+            padding: 2.5rem;
+            backdrop-filter: var(--glass);
+            border-radius: 4px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-green);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--accent-green);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        /* --- SECTION SPECIFIC --- */
+        
+        /* Hero Split Layout */
+        .hero-split {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content {
+            z-index: 2;
+        }
+
+        .hero-image-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-img {
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 2px;
+            filter: grayscale(100%) contrast(1.1);
+            transition: all 0.5s ease;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .hero-img:hover {
+            filter: grayscale(0%);
+            border-color: var(--accent-green);
+        }
+
+        /* Decorative frame around image */
+        .img-frame {
+            position: absolute;
+            width: 100%;
+            max-width: 420px;
+            height: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: -1;
+            transform: translate(15px, 15px);
+        }
+
+        .hero-tags {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            border: 1px solid var(--text-muted);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* Stats Grid for FinOps */
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-val {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Nova Section */
+        #nova .schematic-overlay {
+            position: absolute;
+            right: 0;
+            top: 20%;
+            width: 40%;
+            height: 60%;
+            border: 1px dashed var(--text-muted);
+            opacity: 0.1;
+            pointer-events: none;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+        }
+        #nova .schematic-overlay div {
+            border: 1px solid var(--text-muted);
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+        .feature-item {
+            margin-bottom: 2rem;
+            border-left: 2px solid var(--accent-green);
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .feature-item strong {
+            display: block;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        .feature-item span {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            padding: 6rem 0 4rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 900px) {
+            .hero-split { grid-template-columns: 1fr; gap: 3rem; }
+            .hero-image-container { order: -1; justify-content: flex-start; }
+            .hero-img, .img-frame { max-width: 250px; }
+            section { padding: 4rem 0; min-height: auto; }
+            #nova .schematic-overlay { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg"></div>
+    <div class="leaf-shape leaf-1"></div>
+    <div class="leaf-shape leaf-2"></div>
+
+    <section id="hero">
+        <div class="container">
+            <div class="hero-split">
+                <div class="hero-content">
+                    <span class="mono-label">System Status: Online | Austin, TX</span>
+                    <h1 class="display-text">
+                        OPERATOR.<br>
+                        BUILDER.<br>
+                        FINOPS ENGINEER.
+                    </h1>
+                    <p style="max-width: 600px; color: var(--text-muted); font-size: 1.2rem; margin-bottom: 2.5rem;">
+                        Building the systems that run the machine. Enterprise finance by day. Autonomous systems by night.
+                    </p>
+                    <div class="hero-tags">
+                        <span class="tag">FinOps Certified</span>
+                        <span class="tag">AI Automation</span>
+                        <span class="tag">Multi-Agent Systems</span>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <a href="#engine" class="btn">The Engine</a>
+                        <a href="#strategy" class="btn btn-secondary">View Strategy</a>
+                        <a href="#nova" class="btn btn-secondary">R&D Lab</a>
+                    </div>
+                </div>
+                
+                <div class="hero-image-container">
+                    <div class="img-frame"></div>
+                    <img src="img1.png" alt="Ben Attanasio" class="hero-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="engine">
+        <div class="container">
+            <span class="mono-label">01 // The Engine (9-5)</span>
+            <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Enterprise Scale. <br><span style="color: var(--text-muted)">Financial Precision.</span></h2>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Tricentis</h3>
+                    <p style="color: var(--accent-green); margin-bottom: 1rem;">$425M ARR // FinOps Engineer</p>
+                    <p style="color: var(--text-muted);">Managing backend financial infrastructure for enterprise-grade software test automation. Optimizing cloud spend at the crossroads of IT and finance.</p>
+                </div>
+                <div class="card">
+                    <h3>MetLife</h3>
+                    <p style="color: var(--accent-green); margin-bottom: 1rem;">$71B Revenue // Past Role</p>
+                    <p style="color: var(--text-muted);">Managed cloud financial analysis and demand management. Experience with server decommissioning and high-volume data analysis.</p>
+                </div>
+                <div class="card">
+                    <h3>Core Stack</h3>
+                    <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="stat-item">
+                            <span class="stat-val">Azure</span>
+                            <span class="stat-label">Cost Mgmt</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-val">PowerBI</span>
+                            <span class="stat-label">Data Analysis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="strategy">
+        <div class="container">
+            <span class="mono-label">02 // The Strategic Partner</span>
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">God of Prompt</h2>
+            <p style="color: var(--text-muted); max-width: 700px; margin-bottom: 3rem; font-size: 1.1rem;">
+                Automation architect. Strategic partner. Operating the systems behind God of Prompt.
+            </p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <span class="mono-label">Role: Operator & Builder</span>
+                    <p style="margin-top: 0.5rem;">Architecting high-level automation workflows using n8n and Make. Creating the infrastructure that powers the community and agency.</p>
+                </div>
+                <div class="card">
+                    <span class="mono-label">Philosophy</span>
+                    <p style="margin-top: 0.5rem;">No guru theory. Showing what actually sells and what actually works inside the machine.</p>
+                </div>
+                <div class="card" style="display: flex; align-items: center; justify-content: center; background: rgba(0,255,157,0.05);">
+                    <div style="text-align: center;">
+                        <span class="stat-val" style="color: var(--accent-green);">6M+</span>
+                        <br>
+                        <span class="stat-label">Total Content Views</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 3rem;">
+                <a href="https://www.godofprompt.ai/" target="_blank" class="btn">Get the Prompts</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="nova">
+        <div class="schematic-overlay">
+            <div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div>
+        </div>
+        <div class="container">
+            <span class="mono-label">03 // R&D Lab</span>
+            <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Project NOVA</h2>
+            <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px;">
+                A Network Of Virtual Agents you command, monitor, and watch work. All from ChatGPT.
+            </p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 1rem;">
+                <div>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <strong>Multi-Agent System</strong>
+                            <span>Complex n8n orchestration flows.</span>
+                        </li>
+                        <li class="feature-item">
+                            <strong>ChatGPT-Native Interface</strong>
+                            <span>No new tools to learn. Command your army where you already work.</span>
+                        </li>
+                        <li class="feature-item">
+                            <strong>Real-World Execution</strong>
+                            <span>These agents act. Real tools. Real deliverables.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <h2 style="font-size: 3rem; margin-bottom: 2rem;">Your move.</h2>
+            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem;">
+                <a href="https://www.godofprompt.ai/" class="btn">PROMPTS & TOOLS</a>
+                <a href="https://www.youtube.com/@god-of-prompt" class="btn btn-secondary">AI TUTORIALS</a>
+                <a href="https://www.youtube.com/@BenAttanasio" class="btn btn-secondary">PERSONAL CHANNEL</a>
+            </div>
+            <p style="margin-top: 5rem; color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-display); opacity: 0.5;">
+                BEN ATTANASIO &copy; 2025 // AUSTIN, TX
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple script for smooth parallax effect on the background leaves
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            const leaves = document.querySelectorAll('.leaf-shape');
+            leaves.forEach((leaf, index) => {
+                const speed = (index + 1) * 20;
+                leaf.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
