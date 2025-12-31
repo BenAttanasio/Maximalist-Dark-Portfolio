@@ -13,7 +13,7 @@
             --accent-dim: #1a4d33;
             --text-main: #e0e6e3;
             --text-muted: #8fa396;
-            --font-display: 'Courier New', Courier, monospace; /* Tech/Code vibe */
+            --font-display: 'Courier New', Courier, monospace;
             --font-body: system-ui, -apple-system, sans-serif;
             --card-border: 1px solid rgba(0, 255, 157, 0.1);
             --glass: blur(12px);
@@ -45,13 +45,12 @@
             background: 
                 radial-gradient(circle at 15% 50%, rgba(0, 80, 40, 0.15), transparent 40%),
                 radial-gradient(circle at 85% 30%, rgba(20, 60, 40, 0.1), transparent 40%);
-            /* Scanline/Noise texture overlay */
             background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
         }
 
-        /* Monstera Abstract Shapes (CSS Only) */
+        /* Monstera Abstract Shapes */
         .leaf-shape {
             position: fixed;
             background: linear-gradient(135deg, rgba(0,255,157,0.03), transparent);
@@ -102,7 +101,6 @@
         }
 
         .display-text {
-            /* Responsive text sizing */
             font-size: clamp(2.5rem, 5vw, 4.5rem);
             line-height: 1.1;
             background: linear-gradient(to right, #fff, #8fa396);
@@ -206,26 +204,23 @@
             align-items: center;
         }
 
-        /* UPDATED IMAGE STYLES */
+        /* IMAGE STYLES */
         .hero-img {
             width: 100%;
             max-width: 400px;
             aspect-ratio: 1/1;
             object-fit: cover;
             border-radius: 2px;
-            /* Removed grayscale filter */
             transition: all 0.3s ease;
-            border: 1px solid rgba(0, 255, 157, 0.2); /* Subtle base border */
+            border: 1px solid rgba(0, 255, 157, 0.2); 
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
         .hero-img:hover {
-            /* Subtle highlight on hover */
             border-color: var(--accent-green);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 15px rgba(0, 255, 157, 0.3);
         }
 
-        /* Decorative frame around image */
         .img-frame {
             position: absolute;
             width: 100%;
@@ -259,21 +254,42 @@
         }
 
         /* Stats Grid for FinOps */
+        /* Updated to use CSS Class for mobile stacking */
+        .stats-grid {
+            margin-top: 1rem; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 1rem;
+        }
+
         .stat-item {
             display: flex;
             flex-direction: column;
         }
+        
         .stat-val {
-            font-size: 2.5rem;
+            /* Clamp font size so it shrinks on mobile */
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
             font-weight: 700;
             color: var(--text-main);
+            word-break: break-word; /* Safety break */
         }
+        
         .stat-label {
             color: var(--text-muted);
             font-size: 0.9rem;
         }
 
         /* Nova Section */
+        /* Updated to use CSS Class for mobile stacking */
+        .nova-grid {
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 4rem; 
+            align-items: start; 
+            margin-top: 1rem;
+        }
+
         #nova .schematic-overlay {
             position: absolute;
             right: 0;
@@ -319,13 +335,26 @@
             text-align: center;
         }
 
-        /* Responsive tweaks */
+        /* --- RESPONSIVE FIXES --- */
         @media (max-width: 900px) {
             .hero-split { grid-template-columns: 1fr; gap: 3rem; }
             .hero-image-container { order: -1; justify-content: flex-start; }
             .hero-img, .img-frame { max-width: 250px; }
+            
             section { padding: 4rem 0; min-height: auto; }
+            
             #nova .schematic-overlay { display: none; }
+
+            /* FIX 1: Stack Stats Grid on Mobile so PowerBI fits */
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* FIX 2: Stack Nova Grid so text isn't squished into 50% width */
+            .nova-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
         }
     </style>
 </head>
@@ -386,7 +415,7 @@
                 </div>
                 <div class="card">
                     <h3>Core Stack</h3>
-                    <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="stats-grid">
                         <div class="stat-item">
                             <span class="stat-val">Azure</span>
                             <span class="stat-label">Cost Mgmt</span>
@@ -447,7 +476,7 @@
                 A Network Of Virtual Agents you command, monitor, and watch work. All from ChatGPT.
             </p>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 1rem;">
+            <div class="nova-grid">
                 <div>
                     <ul class="feature-list">
                         <li class="feature-item">
