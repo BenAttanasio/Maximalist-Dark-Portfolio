@@ -105,7 +105,7 @@
             line-height: 1.1;
             background: linear-gradient(to right, #fff, #8fa396);
             -webkit-background-clip: text;
-            background-clip: text; /* STANDARD PROPERTY ADDED HERE */
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1.5rem;
         }
@@ -265,11 +265,12 @@
         .stat-item {
             display: flex;
             flex-direction: column;
-            overflow: hidden; 
+            overflow: hidden;
+            min-width: 0;
         }
         
         .stat-val {
-            font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+            font-size: clamp(1.3rem, 2vw, 2rem);
             font-weight: 700;
             color: var(--text-main);
             white-space: nowrap; 
@@ -511,7 +512,6 @@
     </footer>
 
     <script>
-        // Simple script for smooth parallax effect on the background leaves
         document.addEventListener('mousemove', (e) => {
             const x = e.clientX / window.innerWidth;
             const y = e.clientY / window.innerHeight;
